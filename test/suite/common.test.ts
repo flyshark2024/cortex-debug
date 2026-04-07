@@ -5,7 +5,7 @@ suite('Common formatting helpers', () => {
     test('Appends hex for integer displays', () => {
         assert.strictEqual(formatValueWithHex('5'), '5 (0x00000005)');
         assert.strictEqual(formatValueWithHex('-1'), '-1 (0xffffffff)');
-        assert.strictEqual(formatValueWithHex("65 'A'"), "65 'A' (0x00000041)");
+        assert.strictEqual(formatValueWithHex(`65 'A'`), `65 'A' (0x00000041)`);
     });
 
     test('Leaves non-integer displays unchanged', () => {
