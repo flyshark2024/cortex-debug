@@ -568,7 +568,26 @@ export function parseHexOrDecInt(str: string): number {
     return str.startsWith('0x') ? parseInt(str.substring(2), 16) : parseInt(str, 10);
 }
 
+function normalizeGdbCharDisplay(value: string): string {
+    const match = value.match(/^(\s*-?[0-9]+)\s+'(?:\\.|[^'])*'(.*)$/);
+    if (!match) {
+        return value;
+    }
+
+    const [, intText, suffix] = match;
+    const num = Number(intText);
+    if (!Number.isSafeInteger(num)) {
+        return value;
+    }
+
+    const charCode = num & 0xff;
+    const isPrintable = (charCode >= 0x20) && (charCode <= 0x7e)
+        && (charCode !== 0x22) && (charCode !== 0x27) && (charCode !== 0x5c);
+    return isPrintable ? `${intText} "${String.fromCharCode(charCode)}"${suffix}` : `${intText} ""${suffix}`;
+}
+
 export function formatValueWithHex(value: string): string {
+    value = normalizeGdbCharDisplay(value);
     if (!value || /0x/i.test(value)) {
         return value;
     }
