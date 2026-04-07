@@ -1,6 +1,6 @@
 import { MINode } from './mi_parse';
 import { DebugProtocol } from '@vscode/debugprotocol';
-import { toStringDecHexOctBin } from '../common';
+import { formatValueWithHex, toStringDecHexOctBin } from '../common';
 import { hexFormat } from '../frontend/utils';
 
 export interface OurSourceBreakpoint extends DebugProtocol.SourceBreakpoint {
@@ -132,10 +132,11 @@ export class VariableObject {
     }
 
     public toProtocolVariable(newName?: string): DebugProtocol.Variable {
+        const displayValue = (this.value === void 0) ? '<unknown>' : formatValueWithHex(this.value);
         const res: DebugProtocol.Variable = {
             name: newName || this.exp,
             evaluateName: this.fullExp || this.exp,
-            value: (this.value === void 0) ? '<unknown>' : this.value,
+            value: displayValue,
             type: this.type,
             presentationHint: {
                 kind: this.displayhint
@@ -151,7 +152,7 @@ export class VariableObject {
 
     public toProtocolEvaluateResponseBody(): DebugProtocol.EvaluateResponse['body'] {
         const res: DebugProtocol.EvaluateResponse['body'] = {
-            result: this.value,
+            result: formatValueWithHex(this.value),
             type: this.type,
             presentationHint: {
                 kind: this.displayhint

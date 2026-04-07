@@ -4,10 +4,21 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "compile",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "compile"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "test-compile",
             "type": "shell",
             "command": "npm",
-            "args": ["run-script", "test-compile"]
+            "args": ["run", "test-compile"],
+            "group": "build"
         }
     ]
 }

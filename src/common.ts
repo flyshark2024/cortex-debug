@@ -568,6 +568,30 @@ export function parseHexOrDecInt(str: string): number {
     return str.startsWith('0x') ? parseInt(str.substring(2), 16) : parseInt(str, 10);
 }
 
+export function formatValueWithHex(value: string): string {
+    if (!value || /0x/i.test(value)) {
+        return value;
+    }
+
+    const match = value.match(/^\s*(-?[0-9]+)(.*)$/);
+    if (!match) {
+        return value;
+    }
+
+    const [, intText, suffix] = match;
+    if (suffix && /^[.eE]/.test(suffix.trimStart())) {
+        return value;
+    }
+
+    const num = Number(intText);
+    if (!Number.isFinite(num) || !Number.isSafeInteger(num)) {
+        return value;
+    }
+
+    const hexValue = (num < 0 ? (num >>> 0) : num).toString(16).padStart(8, '0');
+    return `${value} (0x${hexValue})`;
+}
+
 export function toStringDecHexOctBin(val: number /* should be an integer */): string {
     if (Number.isNaN(val)) {
         return 'NaN: Not a number';
